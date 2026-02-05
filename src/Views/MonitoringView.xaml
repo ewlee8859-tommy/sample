@@ -73,6 +73,14 @@
                         IsEnabled="{Binding CanStop}"
                         Width="80" Height="32"/>
 
+                <!-- 초기화 버튼 -->
+                <Button Grid.Column="2"
+                        Content="초기화"
+                        Command="{Binding ResetCommand}"
+                        Width="80" Height="32"
+                        Margin="10,0,0,0"
+                        HorizontalAlignment="Left"/>
+
                 <!-- 상태 표시 -->
                 <StackPanel Grid.Column="3"
                             Orientation="Horizontal"
