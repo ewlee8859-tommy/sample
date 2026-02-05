@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- 독립 모듈 이름 -->
+    <AssemblyName>MotorMonitor</AssemblyName>
+    <RootNamespace>MotorMonitor</RootNamespace>
+
+    <!-- Version Information -->
+    <Version>1.0.0-dev</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0-dev</InformationalVersion>
+
+    <!-- Assembly Metadata -->
+    <Company>MotorMonitor</Company>
+    <Product>Motor Monitoring Plugin Module</Product>
+    <Description>모터 시스템 상태 모니터링 플러그인 모듈</Description>
+    <Copyright>Copyright © 2026</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dirkster.AvalonDock" Version="4.72.1" />
+    <PackageReference Include="Prism.DryIoc" Version="9.0.537" />
+    <PackageReference Include="Prism.Wpf" Version="9.0.537" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.122" />
+  </ItemGroup>
+
+  <!-- SDK DLL 참조 (사내 서버에서 배포받은 SDK) -->
+  <ItemGroup>
+    <Reference Include="DevTestWpfCalApp.UI.Core">
+      <HintPath>..\SDK\DevTestWpfCalApp.UI.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevTestWpfCalApp.Application.Core">
+      <HintPath>..\SDK\DevTestWpfCalApp.Application.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <!-- 빌드 후 출력 디렉토리에 플러그인 DLL 복사 (개발 편의) -->
+  <Target Name="CopyToPluginsOutput" AfterTargets="Build" Condition="Exists('$(PluginsOutputDir)')">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(PluginsOutputDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>
