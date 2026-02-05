@@ -91,6 +91,7 @@ public class MonitoringViewModel : ViewModelBase
     // 커맨드
     public ICommand StartCommand { get; }
     public ICommand StopCommand { get; }
+    public ICommand ResetCommand { get; }
 
     public MonitoringViewModel(IMonitoringService monitoringService)
     {
@@ -102,6 +103,7 @@ public class MonitoringViewModel : ViewModelBase
         // 커맨드 초기화
         StartCommand = new RelayCommand(StartMonitoring, () => CanStart);
         StopCommand = new RelayCommand(StopMonitoring, () => CanStop);
+        ResetCommand = new RelayCommand(ResetValues);
 
         // 초기 상태 표시
         UpdateDisplay(_monitoringService.GetCurrentStatus());
@@ -117,6 +119,11 @@ public class MonitoringViewModel : ViewModelBase
     {
         _monitoringService.StopMonitoring();
         IsMonitoring = false;
+    }
+
+    private void ResetValues()
+    {
+        _monitoringService.ResetValues();
     }
 
     /// <summary>

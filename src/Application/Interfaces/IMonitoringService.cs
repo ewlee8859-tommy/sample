@@ -26,6 +26,11 @@ public interface IMonitoringService : IDisposable
     void StopMonitoring();
 
     /// <summary>
+    /// 모니터링 값 초기화 (모든 값을 0으로 리셋)
+    /// </summary>
+    void ResetValues();
+
+    /// <summary>
     /// 모니터링 실행 중 여부
     /// </summary>
     bool IsRunning { get; }

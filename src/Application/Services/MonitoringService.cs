@@ -73,6 +73,23 @@ public class MonitoringService : IMonitoringService
         StatusUpdated?.Invoke(MotorStatusDto.FromEntity(_currentStatus));
     }
 
+    public void ResetValues()
+    {
+        // 모든 값을 0으로 초기화
+        _currentStatus.EncoderCommand = 0;
+        _currentStatus.EncoderFeedback = 0;
+        _currentStatus.Position = 0;
+        _currentStatus.Speed = 0;
+        _currentStatus.Torque = 0;
+        _currentStatus.Timestamp = DateTime.Now;
+
+        // 시뮬레이션 시간도 리셋
+        _simulationTime = 0;
+
+        // UI 업데이트 알림
+        StatusUpdated?.Invoke(MotorStatusDto.FromEntity(_currentStatus));
+    }
+
     private async Task RunMonitoringLoopAsync(CancellationToken ct)
     {
         try
