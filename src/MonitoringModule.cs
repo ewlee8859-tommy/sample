@@ -157,6 +157,7 @@ public class MonitoringModule : IPluginModule
 
     /// <summary>
     /// AvalonDock X 버튼으로 탭이 닫힌 경우 상태 동기화
+    /// ModuleUnloadedEvent는 발행하지 않음 (탭만 닫힌 것이므로 네비게이션 유지)
     /// </summary>
     private void OnRegionViewsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
@@ -167,7 +168,7 @@ public class MonitoringModule : IPluginModule
             var region = _regionManager.Regions[RegionNames.DocumentRegion];
             region.Views.CollectionChanged -= OnRegionViewsChanged;
 
-            // ViewModel 정리
+            // ViewModel 정리 (모니터링 타이머 중지)
             if (_view?.DataContext is MonitoringViewModel vm)
             {
                 vm.Cleanup();
@@ -175,11 +176,6 @@ public class MonitoringModule : IPluginModule
 
             _view = null;
             IsActive = false;
-
-            _eventAggregator.GetEvent<ModuleUnloadedEvent>().Publish(new ModuleUnloadedEventArgs
-            {
-                ModuleId = ModuleId
-            });
         }
     }
 
