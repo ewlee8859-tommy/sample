@@ -1,0 +1,11 @@
+{
+    "id": "Monitoring",
+    "name": "MotorMonitor",
+    "version": "1.0.0",
+    "displayName": "Motor Monitor",
+    "description": "모터 시스템 상태 실시간 모니터링",
+    "author": "MotorMonitor",
+    "entryPoint": "MotorMonitor.dll",
+    "moduleType": "MotorMonitor.MonitoringModule",
+    "loadMode": "OnDemand"
+}

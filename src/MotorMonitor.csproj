@@ -24,20 +24,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dirkster.AvalonDock" Version="4.72.1" />
     <PackageReference Include="Prism.DryIoc" Version="9.0.537" />
     <PackageReference Include="Prism.Wpf" Version="9.0.537" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.122" />
   </ItemGroup>
 
-  <!-- SDK DLL 참조 (사내 서버에서 배포받은 SDK) -->
+  <!-- 새 SDK DLL 참조 -->
   <ItemGroup>
-    <Reference Include="DevTestWpfCalApp.UI.Core">
-      <HintPath>..\SDK\DevTestWpfCalApp.UI.Core.dll</HintPath>
+    <Reference Include="DevTestWpfCalApp.Sdk.Abstractions">
+      <HintPath>..\SDK\DevTestWpfCalApp.Sdk.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="DevTestWpfCalApp.Application.Core">
-      <HintPath>..\SDK\DevTestWpfCalApp.Application.Core.dll</HintPath>
+    <Reference Include="DevTestWpfCalApp.Sdk.Common">
+      <HintPath>..\SDK\DevTestWpfCalApp.Sdk.Common.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <!-- plugin.json을 출력 디렉토리에 복사 -->
+  <ItemGroup>
+    <None Include="plugin.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <!-- 빌드 후 출력 디렉토리에 플러그인 DLL 복사 (개발 편의) -->

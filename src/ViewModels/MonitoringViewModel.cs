@@ -1,6 +1,6 @@
 using System.Windows;
 using System.Windows.Input;
-using DevTestWpfCalApp.UI.Core.Base;
+using DevTestWpfCalApp.Sdk.Common.Base;
 using MotorMonitor.Application.DTOs;
 using MotorMonitor.Application.Interfaces;
 
