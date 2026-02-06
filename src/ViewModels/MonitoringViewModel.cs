@@ -92,6 +92,7 @@ public class MonitoringViewModel : ViewModelBase
     public ICommand StartCommand { get; }
     public ICommand StopCommand { get; }
     public ICommand ResetCommand { get; }
+    public ICommand ScanCommand { get; }
 
     public MonitoringViewModel(IMonitoringService monitoringService)
     {
@@ -104,6 +105,7 @@ public class MonitoringViewModel : ViewModelBase
         StartCommand = new RelayCommand(StartMonitoring, () => CanStart);
         StopCommand = new RelayCommand(StopMonitoring, () => CanStop);
         ResetCommand = new RelayCommand(ResetValues);
+        ScanCommand = new RelayCommand(OnScan);
 
         // 초기 상태 표시
         UpdateDisplay(_monitoringService.GetCurrentStatus());
@@ -124,6 +126,11 @@ public class MonitoringViewModel : ViewModelBase
     private void ResetValues()
     {
         _monitoringService.ResetValues();
+    }
+
+    private void OnScan()
+    {
+        // 빈 구현 (추후 장치 스캔 기능)
     }
 
     /// <summary>

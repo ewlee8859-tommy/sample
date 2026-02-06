@@ -1,0 +1,53 @@
+<UserControl x:Class="MotorMonitor.Views.MonitoringToolbarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="40" d:DesignWidth="500"
+             Background="#3E3E42">
+
+    <ToolBarTray Background="#3E3E42" IsLocked="True">
+        <ToolBar Background="#3E3E42" Band="1" BandIndex="0">
+            <!-- Module Identifier Label -->
+            <TextBlock Text="Motor Monitor:"
+                       Foreground="#AAAAAA"
+                       VerticalAlignment="Center"
+                       Margin="5,0,10,0"
+                       FontWeight="SemiBold"/>
+            <Separator />
+
+            <!-- Scan Button (Empty functionality) -->
+            <Button Content="스캔"
+                    Padding="8,4"
+                    Margin="2"
+                    ToolTip="장치 스캔"
+                    Command="{Binding ScanCommand}" />
+
+            <Separator />
+
+            <!-- Start Button -->
+            <Button Content="시작"
+                    Padding="8,4"
+                    Margin="2"
+                    ToolTip="모니터링 시작"
+                    Command="{Binding StartCommand}"
+                    IsEnabled="{Binding CanStart}" />
+
+            <!-- Stop Button -->
+            <Button Content="정지"
+                    Padding="8,4"
+                    Margin="2"
+                    ToolTip="모니터링 정지"
+                    Command="{Binding StopCommand}"
+                    IsEnabled="{Binding CanStop}" />
+
+            <!-- Reset Button -->
+            <Button Content="초기화"
+                    Padding="8,4"
+                    Margin="2"
+                    ToolTip="값 초기화"
+                    Command="{Binding ResetCommand}" />
+        </ToolBar>
+    </ToolBarTray>
+</UserControl>

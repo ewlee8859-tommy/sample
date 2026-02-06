@@ -29,6 +29,8 @@ public class MonitoringModule : IPluginModule
     private readonly IEventAggregator _eventAggregator;
     private readonly IContainerProvider _containerProvider;
     private MonitoringView? _view;
+    private MonitoringToolbarView? _toolbarView;
+    private MonitoringViewModel? _viewModel;
     private bool _disposed;
 
     public string ModuleId => "Monitoring";
@@ -55,8 +57,12 @@ public class MonitoringModule : IPluginModule
         // 모듈 자체 서비스 등록
         containerRegistry.RegisterSingleton<IMonitoringService, MonitoringService>();
 
-        // 뷰 네비게이션 등록
-        containerRegistry.RegisterForNavigation<MonitoringView, MonitoringViewModel>();
+        // ViewModel 등록 (수동 DataContext 설정을 위해 직접 등록)
+        containerRegistry.Register<MonitoringViewModel>();
+
+        // 뷰 등록
+        containerRegistry.Register<MonitoringView>();
+        containerRegistry.Register<MonitoringToolbarView>();
     }
 
     public void OnInitialized(IContainerProvider containerProvider)
@@ -75,15 +81,29 @@ public class MonitoringModule : IPluginModule
     {
         if (IsActive) return;
 
-        var region = _regionManager.Regions[RegionNames.DocumentRegion];
+        var documentRegion = _regionManager.Regions[RegionNames.DocumentRegion];
 
-        // View 생성 및 추가
+        // 공유 ViewModel 생성
+        _viewModel = _containerProvider.Resolve<MonitoringViewModel>();
+
+        // 메인 View 생성 및 추가 (DataContext 수동 설정)
         _view = _containerProvider.Resolve<MonitoringView>();
-        region.Add(_view);
-        region.Activate(_view);
+        _view.DataContext = _viewModel;
+        documentRegion.Add(_view);
+        documentRegion.Activate(_view);
 
         // AvalonDock X 버튼 처리를 위한 이벤트 구독
-        region.Views.CollectionChanged += OnRegionViewsChanged;
+        documentRegion.Views.CollectionChanged += OnRegionViewsChanged;
+
+        // 툴바 View 생성 및 추가 (동일 ViewModel 공유)
+        if (_regionManager.Regions.ContainsRegionWithName(RegionNames.ModuleToolbarRegion))
+        {
+            var toolbarRegion = _regionManager.Regions[RegionNames.ModuleToolbarRegion];
+            _toolbarView = _containerProvider.Resolve<MonitoringToolbarView>();
+            _toolbarView.DataContext = _viewModel;
+            toolbarRegion.Add(_toolbarView);
+            toolbarRegion.Activate(_toolbarView);
+        }
 
         IsActive = true;
 
@@ -102,24 +122,34 @@ public class MonitoringModule : IPluginModule
     /// </summary>
     public void Deactivate()
     {
+        // Document Region에서 메인 뷰 제거
         if (_regionManager.Regions.ContainsRegionWithName(RegionNames.DocumentRegion))
         {
-            var region = _regionManager.Regions[RegionNames.DocumentRegion];
-            region.Views.CollectionChanged -= OnRegionViewsChanged;
+            var documentRegion = _regionManager.Regions[RegionNames.DocumentRegion];
+            documentRegion.Views.CollectionChanged -= OnRegionViewsChanged;
 
-            if (_view != null && region.Views.Contains(_view))
+            if (_view != null && documentRegion.Views.Contains(_view))
             {
-                region.Remove(_view);
+                documentRegion.Remove(_view);
+            }
+        }
+
+        // Module Toolbar Region에서 툴바 뷰 제거
+        if (_regionManager.Regions.ContainsRegionWithName(RegionNames.ModuleToolbarRegion))
+        {
+            var toolbarRegion = _regionManager.Regions[RegionNames.ModuleToolbarRegion];
+            if (_toolbarView != null && toolbarRegion.Views.Contains(_toolbarView))
+            {
+                toolbarRegion.Remove(_toolbarView);
             }
         }
 
         // ViewModel 정리 (모니터링 타이머 중지)
-        if (_view?.DataContext is MonitoringViewModel vm)
-        {
-            vm.Cleanup();
-        }
+        _viewModel?.Cleanup();
 
         _view = null;
+        _toolbarView = null;
+        _viewModel = null;
         IsActive = false;
 
         // 모듈 언로드 이벤트 발행
@@ -165,16 +195,25 @@ public class MonitoringModule : IPluginModule
             e.OldItems?.Contains(_view) == true)
         {
             // 이벤트 구독 해제
-            var region = _regionManager.Regions[RegionNames.DocumentRegion];
-            region.Views.CollectionChanged -= OnRegionViewsChanged;
+            var documentRegion = _regionManager.Regions[RegionNames.DocumentRegion];
+            documentRegion.Views.CollectionChanged -= OnRegionViewsChanged;
 
-            // ViewModel 정리 (모니터링 타이머 중지)
-            if (_view?.DataContext is MonitoringViewModel vm)
+            // 툴바도 함께 제거
+            if (_regionManager.Regions.ContainsRegionWithName(RegionNames.ModuleToolbarRegion))
             {
-                vm.Cleanup();
+                var toolbarRegion = _regionManager.Regions[RegionNames.ModuleToolbarRegion];
+                if (_toolbarView != null && toolbarRegion.Views.Contains(_toolbarView))
+                {
+                    toolbarRegion.Remove(_toolbarView);
+                }
             }
 
+            // ViewModel 정리 (모니터링 타이머 중지)
+            _viewModel?.Cleanup();
+
             _view = null;
+            _toolbarView = null;
+            _viewModel = null;
             IsActive = false;
         }
     }
